@@ -1,0 +1,19 @@
+{
+  "name": "apirestproject",
+  "version": "1.0.0",
+  "description": "apirest de prueba para empezar",
+  "main": "app.js",
+  "scripts": {
+    
+    "tsc": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "suikun",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}
