@@ -5,9 +5,9 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const dbConfig: ConnectionAttributes  = {
-    user: 'ADMIN',
-    password: 'Fabian6129**',
-    connectString: 'localhost:1521/orcl'
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    connectString: process.env.DB_CONNECT_STRING
 };
 
 // Función para establecer la conexión a la base de datos
