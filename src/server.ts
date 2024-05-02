@@ -1,6 +1,7 @@
 // Import the express module to create a web server.
 import express from 'express';
 import { connectToDatabase } from './database';
+import { enviarSaludo } from './controllers/saludoController';
 
 // Initialize an instance of the express application.
 const app = express();
@@ -9,6 +10,8 @@ const app = express();
 app.use(express.json());
 //  Define el puerto que recibe la solicitud.
 const PORT = process.env.PORT || 3000;
+
+app.get('/saludo', enviarSaludo);
 
 app.get('/', async (_req, res) => {
   let dbConnection; // Variable para almacenar la conexión a la base de datos

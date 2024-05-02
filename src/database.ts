@@ -7,13 +7,14 @@ dotenv.config();
 const dbConfig: ConnectionAttributes  = {
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
-    connectString: process.env.DB_CONNECT_STRING
+    connectString: 'adb.sa-santiago-1.oraclecloud.com:1522/gf678359b0c043b_dbpruebas_high.adb.oraclecloud.com'
+
 };
 
 // Función para establecer la conexión a la base de datos
 export async function connectToDatabase() {
     let connection: Connection;
-    console.log('datos de conexion:', process.env.DB_CONNECT_STRING);
+    console.log('datos de conexion:', dbConfig.connectString);
 
     try {
         // Intenta conectarte a la base de datos usando los parámetros de conexión
