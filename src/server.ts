@@ -21,7 +21,7 @@ app.get('/', async (_req, res) => {
       console.log('Conexión establecida a Oracle Database');
 
       // Ejemplo: realiza una consulta a la base de datos
-      const result = await dbConnection.execute('SELECT * usuarios');
+      const result = await dbConnection.execute('SELECT * FROM usuarios');
       console.log('Resultado de la consulta:', result.rows);
 
       res.send('Hello World! Database connection established.');
