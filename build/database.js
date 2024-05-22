@@ -18,15 +18,15 @@ const oracledb_1 = __importDefault(require("oracledb"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const dbConfig = {
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    connectString: process.env.DB_CONNECT_STRING,
+    user: 'MDY2131_P12_1',
+    password: 'MDY2131.practica_12_1',
+    connectString: '192.168.100.11:300/xe'
 };
 // Función para establecer la conexión a la base de datos
 function connectToDatabase() {
     return __awaiter(this, void 0, void 0, function* () {
         let connection;
-        console.log('datos de conexion:', process.env.DB_CONNECT_STRING);
+        console.log('datos de conexion:', dbConfig.connectString);
         try {
             // Intenta conectarte a la base de datos usando los parámetros de conexión
             connection = yield oracledb_1.default.getConnection(dbConfig);

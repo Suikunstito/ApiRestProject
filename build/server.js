@@ -15,12 +15,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // Import the express module to create a web server.
 const express_1 = __importDefault(require("express"));
 const database_1 = require("./database");
+const saludoController_1 = require("./controllers/saludoController");
 // Initialize an instance of the express application.
 const app = (0, express_1.default)();
 // Configura express para que pueda analizar solicitudes en formato JSON.
 app.use(express_1.default.json());
 //  Define el puerto que recibe la solicitud.
 const PORT = process.env.PORT || 3000;
+app.get('/saludo', saludoController_1.enviarSaludo);
 app.get('/', (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let dbConnection; // Variable para almacenar la conexión a la base de datos
     try {

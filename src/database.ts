@@ -5,10 +5,9 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const dbConfig: ConnectionAttributes  = {
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    connectString: 'adb.sa-santiago-1.oraclecloud.com:1522/gf678359b0c043b_dbpruebas_high.adb.oraclecloud.com'
-
+    user: '',
+    password: '',
+    connectString: ''
 };
 
 // Función para establecer la conexión a la base de datos

@@ -9,7 +9,7 @@ const app = express();
 // Configura express para que pueda analizar solicitudes en formato JSON.
 app.use(express.json());
 //  Define el puerto que recibe la solicitud.
-const PORT = process.env.PORT || 3000;
+const port = 3000;
 
 app.get('/saludo', enviarSaludo);
 
@@ -37,6 +37,6 @@ app.get('/', async (_req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-        console.log(`Server running on port ${PORT}`)
-})
+app.listen(port, '0.0.0.0', () => {
+    console.log(`Servidor corriendo en http://<tu-ip-local>:${port}`);
+  });
