@@ -2,6 +2,7 @@
 import express from 'express';
 import { connectToDatabase } from './database';
 import { enviarSaludo } from './controllers/saludoController';
+import { addUser } from './controllers/UsuarioController';
 
 // Initialize an instance of the express application.
 const app = express();
@@ -36,6 +37,9 @@ app.get('/', async (_req, res) => {
       }
   }
 });
+
+// Definir la nueva ruta POST para agregar un usuario
+app.post('/usuarios', addUser);
 
 app.listen(port, '0.0.0.0', () => {
     console.log(`Servidor corriendo en http://<tu-ip-local>:${port}`);
