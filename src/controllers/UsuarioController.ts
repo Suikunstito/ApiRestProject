@@ -1,6 +1,6 @@
 // controllers/userController.ts
 import { Request, Response } from 'express';
-import { connectToDatabase } from '../database';
+import { connectToDatabase } from '../config/database';
 
 export const addUser = async (req: Request, res: Response): Promise<void> => {
   const { id, email, password } = req.body;

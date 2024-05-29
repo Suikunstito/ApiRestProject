@@ -14,38 +14,42 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 // Import the express module to create a web server.
 const express_1 = __importDefault(require("express"));
-const database_1 = require("./database");
+const dotenv_1 = __importDefault(require("dotenv"));
+const db_1 = __importDefault(require("./config/db"));
 const saludoController_1 = require("./controllers/saludoController");
-// Initialize an instance of the express application.
+const UsuarioController_1 = require("./controllers/UsuarioController");
+const mongoose_1 = __importDefault(require("mongoose"));
+dotenv_1.default.config();
+const port = parseInt(process.env.PORT || '3000', 10);
+// Inicializa una instancia de la aplicación express.
 const app = (0, express_1.default)();
 // Configura express para que pueda analizar solicitudes en formato JSON.
 app.use(express_1.default.json());
-//  Define el puerto que recibe la solicitud.
-const PORT = process.env.PORT || 3000;
-app.get('/saludo', saludoController_1.enviarSaludo);
-app.get('/', (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let dbConnection; // Variable para almacenar la conexión a la base de datos
-    try {
-        // Intenta conectar a la base de datos al recibir una solicitud en la ruta raíz
-        dbConnection = yield (0, database_1.connectToDatabase)();
-        console.log('Conexión establecida a Oracle Database');
-        // Ejemplo: realiza una consulta a la base de datos
-        const result = yield dbConnection.execute('SELECT * usuarios');
-        console.log('Resultado de la consulta:', result.rows);
-        res.send('Hello World! Database connection established.');
-    }
-    catch (error) {
-        console.error('Error al conectar a la base de datos:', error.message);
-        res.status(500).send('Error al conectar a la base de datos.');
-    }
-    finally {
-        // Cierra la conexión a la base de datos después de realizar la operación
-        if (dbConnection) {
-            yield dbConnection.close();
-            console.log('Conexión cerrada correctamente.');
+// Conecta a la base de datos y arranca el servidor.
+const startServer = () => __awaiter(void 0, void 0, void 0, function* () {
+    yield (0, db_1.default)();
+    // Define la ruta GET para el saludo.
+    app.get('/saludo', saludoController_1.enviarSaludo);
+    // Define la ruta GET para la raíz.
+    app.get('/', (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            // Realiza una consulta a la base de datos.
+            const users = yield mongoose_1.default.connection.db.collection('usuarios').find().toArray();
+            console.log('Resultado de la consulta:', users);
+            res.send('Hello World! Database connection established.');
         }
-    }
-}));
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+        catch (error) {
+            console.error('Error al conectar a la base de datos:', error.message);
+            res.status(500).send('Error al conectar a la base de datos.');
+        }
+    }));
+    // Define la ruta POST para agregar un usuario.
+    app.post('/usuarios', UsuarioController_1.addUser);
+    app.listen(port, '0.0.0.0', () => {
+        console.log(`Servidor corriendo en http://<tu-ip-local>:${port}`);
+    });
+});
+startServer().catch((error) => {
+    console.error('Error al iniciar el servidor:', error);
+    process.exit(1);
 });

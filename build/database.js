@@ -18,9 +18,9 @@ const oracledb_1 = __importDefault(require("oracledb"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const dbConfig = {
-    user: 'MDY2131_P12_1',
-    password: 'MDY2131.practica_12_1',
-    connectString: '192.168.100.11:300/xe'
+    user: 'HR',
+    password: 'HR',
+    connectString: 'localhost/xe'
 };
 // Función para establecer la conexión a la base de datos
 function connectToDatabase() {
