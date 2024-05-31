@@ -1,8 +1,8 @@
-// Import the express module to create a web server.
 import express from 'express';
 import usuarioRoutes from './routes/usuarioRoutes';
 import saludoRoute from './routes/saludoRoute';
 import negocioRoutes from './routes/negocioRoutes';
+import authRoutes from './routes/authRoutes';
 
 // Inicializa una instancia de la aplicación express.
 const app = express();
@@ -14,6 +14,6 @@ app.use(express.json());
 app.use('/saludo', saludoRoute);
 app.use('/usuarios', usuarioRoutes);
 app.use('/negocios', negocioRoutes);
-
+app.use('/auth', authRoutes);
 
 export default app;
