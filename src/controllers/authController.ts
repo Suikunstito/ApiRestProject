@@ -1,11 +1,12 @@
+
 import jwt from 'jsonwebtoken';
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcryptjs';
 import Usuario from '../models/usuarios';
 
 interface CustomRequest extends Request {
     userId: string;
-  }
+}
 // Generar token JWT para un usuario autenticado
 export const generarToken = (usuarioId: string) => {
     return jwt.sign({ id: usuarioId }, process.env.JWT_SECRET || '', {
@@ -30,16 +31,19 @@ export const login = async (req: Request, res: Response) => {
             return res.status(401).json({ message: 'Credenciales incorrectas: contraseña incorrecta' });
         }
 
-        // Generar token JWT
-        const token = generarToken(usuario._id.toString());
-        
-        // Enviar el token como respuesta
-        return res.status(200).json({ token });
+        // Generate JWT token
+        const token = generarToken(usuario.id);
+
+        return res.status(200).json({
+            success: true,
+            message: 'Inicio de sesión exitoso',
+            token,
+            userId: usuario.id,
+        });
     } catch (error) {
         res.status(500).json({ message: (error as Error).message });
     }
 
-    // Add this return statement to handle the case where the user is not found or the password is incorrect
     return res.status(401).json({ message: 'Credenciales incorrectas' });
 };
 
@@ -57,21 +61,18 @@ export const logout = async (_req: Request, res: Response) => {
     }
 };
 // Middleware para verificar el token JWT en las solicitudes protegidas
-export const verificarToken = (req: CustomRequest, res: Response, next: Function) => {
+export const verificarToken = (req: CustomRequest, _res: Response, next: NextFunction) => {
     const token = req.header('Authorization');
 
     if (!token) {
-        return res.status(401).json({ message: 'Token no proporcionado' });
+        throw new Error('Token no proporcionado');
     }
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET || '') as { id: string };
-        req.userId = decoded.id; // Agregar el ID del usuario decodificado a la solicitud
-        next(); // Continuar con la siguiente función de middleware
+        req.userId = decoded.id; // Add the decoded user ID to the request
+        next(); // Continue with the next middleware function
     } catch (error) {
-        return res.status(401).json({ message: 'Token no válido' });
+        throw new Error('Token no válido');
     }
-
-    // Add this return statement to handle the case where the token is not provided or is invalid
-    return res.status(401).json({ message: 'Token no válido' });
 };
