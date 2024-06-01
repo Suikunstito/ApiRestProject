@@ -5,7 +5,7 @@ import Usuario from '../models/usuarios';
 // Crear un negocio
 export const addNegocio = async (req: Request, res: Response) => {
     const { nombre, ubicacion, descripcion, propietarioId } = req.body;
-
+    console.log('Solicitud recibida:', req.body);
     try {
         const usuario = await Usuario.findById(propietarioId);
         if (!usuario) {
@@ -23,6 +23,7 @@ export const addNegocio = async (req: Request, res: Response) => {
 
         res.status(201).json(negocioGuardado);
     } catch (error) {
+        console.log(error);
         res.status(400).json({ message: (error as Error).message });
     }
     return;
@@ -38,6 +39,20 @@ export const getNegocios = async (_req: Request, res: Response) => {
     }
 };
 
+export const getNegocioByPropietarioId = async (req: Request, res: Response) => {
+    const { propietarioId } = req.params;
+    
+    try {
+        const negocio = await Negocio.findOne({ propietarioId: propietarioId });
+        if (!negocio) {
+            return res.status(200).json({ message: 'No se encontraron negocios para este propietario' });
+        }
+        res.status(200).json(negocio);
+    } catch (error) {
+        res.status(500).json({ message: (error as Error).message });
+    }
+    return;
+};
 // Leer un negocio por ID
 export const getNegocioById = async (req: Request, res: Response) => {
     try {
