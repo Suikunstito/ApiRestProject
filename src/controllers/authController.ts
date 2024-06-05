@@ -8,46 +8,46 @@ interface CustomRequest extends Request {
     userId: string;
 }
 // Generar token JWT para un usuario autenticado
-export const generarToken = (usuarioId: string) => {
-    return jwt.sign({ id: usuarioId }, process.env.JWT_SECRET || '', {
-        expiresIn: '1h' // El token expirará en 1 hora, puedes ajustarlo según tus necesidades
-    });
-};
+export const generarToken = (usuarioId: string) => 
+    jwt.sign({ id: usuarioId }, process.env.JWT_SECRET || '',
+    { expiresIn: '1h' }
+);
+
 
 // Controlador para iniciar sesión y generar un token JWT
-export const login = async (req: Request, res: Response) => {
-    const { email, password } = req.body;
-
+export const login = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const usuario = await Usuario.findOne({ email });
+        const { email, password } = req.body;
 
-        if (!usuario) {
-            return res.status(401).json({ message: 'Credenciales incorrectas: email no encontrado' });
+        try {
+            const usuario = await Usuario.findOne({ email });
+
+            if (!usuario) return res.status(401).json({ message: 'Credenciales incorrectas: email no encontrado' });
+
+            const passwordValido = await bcrypt.compare(password, usuario.password);
+
+            if (!passwordValido) return res.status(401).json({ message: 'Credenciales incorrectas: contraseña incorrecta' });
+            // Generate JWT token
+            const token = generarToken(usuario.id);
+
+            return res.status(200).json({
+                success: true,
+                message: 'Inicio de sesión exitoso',
+                token,
+                userId: usuario.id,
+            });
+        } catch (error) {
+            res.status(500).json({ message: (error as Error).message });
         }
 
-        const passwordValido = await bcrypt.compare(password, usuario.password);
-
-        if (!passwordValido) {
-            return res.status(401).json({ message: 'Credenciales incorrectas: contraseña incorrecta' });
-        }
-
-        // Generate JWT token
-        const token = generarToken(usuario.id);
-
-        return res.status(200).json({
-            success: true,
-            message: 'Inicio de sesión exitoso',
-            token,
-            userId: usuario.id,
-        });
+        return res.status(401).json({ message: 'Credenciales incorrectas' });
     } catch (error) {
-        res.status(500).json({ message: (error as Error).message });
+        next(error);
     }
-
-    return res.status(401).json({ message: 'Credenciales incorrectas' });
+    return res.status(500).json({ message: 'Internal Server Error' });
 };
 
-export const logout = async (_req: Request, res: Response) => {
+export const logout = async (_req: Request, res: Response, next: NextFunction) => {
     try {
         // Elimina el token JWT del usuario (si estás utilizando cookies)
         res.clearCookie('token'); // Elimina una cookie llamada 'token' (si estás utilizando cookies)
@@ -57,22 +57,19 @@ export const logout = async (_req: Request, res: Response) => {
         // Envía una respuesta exitosa al cliente
         res.status(200).json({ message: 'Sesión cerrada exitosamente' });
     } catch (error) {
-        res.status(500).json({ message: (error as Error).message });
+        next(error);
     }
 };
 // Middleware para verificar el token JWT en las solicitudes protegidas
 export const verificarToken = (req: CustomRequest, _res: Response, next: NextFunction) => {
-    const token = req.header('Authorization');
-
-    if (!token) {
-        throw new Error('Token no proporcionado');
-    }
-
     try {
+        const token = req.header('Authorization');
+
+        if (!token) throw new Error('Token no proporcionado');
+
         const decoded = jwt.verify(token, process.env.JWT_SECRET || '') as { id: string };
-        req.userId = decoded.id; // Add the decoded user ID to the request
-        next(); // Continue with the next middleware function
+        req.userId = decoded.id;
     } catch (error) {
-        throw new Error('Token no válido');
+        next(error);
     }
 };
