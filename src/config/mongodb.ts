@@ -9,7 +9,6 @@ const connectDB = async () => {
     if (error instanceof Error) {
       console.error(`Error: ${error.message}`);
     }
-    process.exit(1);
   }
 };
 

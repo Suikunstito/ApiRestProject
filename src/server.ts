@@ -1,7 +1,6 @@
 import dotenv from 'dotenv';
-import mongoose from 'mongoose';
-import app from './app';
-import connectDB from './config/db';
+import app from './app.js';
+import connectDB from './config/mongodb';
 
 dotenv.config();
 
@@ -9,12 +8,10 @@ const port = parseInt(process.env.PORT || '3000', 10);
 
 const startServer = async () => {
     await connectDB();
-
+    
     app.get('/', async (_req, res) => {
         try {
-            const users = await mongoose.connection.db.collection('usuarios').find().toArray();
-            console.log('Resultado de la consulta:', users);
-
+            console.log('Raiz consultada');
             res.send('Hello World! Database connection established.');
         } catch (error: any) {
             console.error('Error al conectar a la base de datos:', error.message);
